@@ -1,0 +1,19 @@
+package layout
+
+import "github.com/lsshawn/go-todo/views/components"
+
+templ Base() {
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<title>Golang TODO</title>
+			<link href="static/css/tailwind.css" rel="stylesheet"/>
+			<script src="https://unpkg.com/htmx.org"></script>
+			<script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.0/dist/alpine.js" defer></script>
+		</head>
+		<body>
+			@components.AppHeader()
+			{ children... }
+		</body>
+	</html>
+}

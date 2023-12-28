@@ -1,0 +1,62 @@
+package views
+
+import "github.com/lsshawn/go-todo/views/layout"
+import "github.com/lsshawn/go-todo/internal/dto"
+import "github.com/lsshawn/go-todo/views/components"
+
+templ Index(todos []*dto.TodoCardDto) {
+	@layout.Base() {
+		<div class="h-screen w-screen bg-black flex flex-col justify-center items-center relative">
+			<div
+ 				class="w-screen bg-black flex flex-col justify-center items-center relative max-w-2xl"
+ 				x-data="{
+          inputText: '',
+          isSubmitting: false,
+          resetInput() { this.$refs.todoInputText.focus(); this.inputText = ''; this.isSubmitting = true; },
+          init() {
+            this.$nextTick(() => {
+                document.body.addEventListener('htmx:afterOnLoad', () => {
+                    this.isSubmitting = false;
+                });
+            });
+        }
+        }"
+ 				x-init="init()"
+			>
+				<form
+ 					class="flex flex-col w-full gap-4"
+ 					hx-post="/add-todo"
+ 					hx-swap="beforeend"
+ 					hx-target="#todos"
+ 					hx-indicator="#spinner"
+ 					@submit.prevent="resetInput()"
+				>
+					<label for="add-todo-input">Todo</label>
+					<input
+ 						type="text"
+ 						id="add-todo-input"
+ 						name="text"
+ 						class="rounded-2xl text-black font-sans text-sm flex-1"
+ 						x-model="inputText"
+ 						x-ref="todoInputText"
+					/>
+					<button
+ 						id="add-todo-button"
+ 						type="submit"
+ 						class="btn btn-success"
+ 						:disabled="isSubmitting"
+					>
+						<span class="loading loading-spinner htmx-indicator" id="spinner" role="status" aria-hidden="true"></span>
+						Add TODO
+					</button>
+				</form>
+				<div class="h-12"></div>
+				<div class="bg-white p-6 rounded-2xl shadow-lg w-full flex flex-col gap-4" id="todos">
+					for _, todo := range todos {
+						@components.TodoCard(todo)
+					}
+				</div>
+			</div>
+		</div>
+	}
+}

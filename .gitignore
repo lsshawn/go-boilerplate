@@ -1,0 +1,7 @@
+app
+*.swp
+*.test
+*.out
+tmp
+.env
+node_modules/
