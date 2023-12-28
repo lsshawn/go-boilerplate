@@ -5,3 +5,4 @@ app
 tmp
 .env
 node_modules/
+*_templ.go
