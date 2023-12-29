@@ -4,6 +4,7 @@ import "github.com/lsshawn/go-todo/views/layout"
 
 templ Index() {
 	@layout.Base() {
+		<!--<div id="chat-sse" hx-ext="sse" sse-connect="/chat-sse" sse-swap="message"></div>-->
 		<div class="h-screen w-screen bg-black flex flex-col justify-center items-center relative text-white">
 			Go!
 		</div>
