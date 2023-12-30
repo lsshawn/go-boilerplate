@@ -1,0 +1,30 @@
+package components
+
+templ ChatInput() {
+	<div
+ 		x-data="{
+      textModel: '',
+      loading: false,
+      resetInput() { this.$refs.textInput.focus(); this.textModel = ''; this.loading = true; },
+    }"
+	>
+		<form
+ 			class="flex flex-col w-full gap-4"
+ 			hx-post="/user-message"
+ 			hx-swap="beforeend"
+ 			hx-target="#messages"
+ 			id="askForm"
+ 			@submit.prevent="resetInput()"
+		>
+			<label for="text-input"></label>
+			<input
+ 				type="text"
+ 				id="text-input"
+ 				name="text"
+ 				class="rounded-2xl text-black font-sans text-sm flex-1"
+ 				x-ref="textInput"
+ 				x-model="textModel"
+			/>
+		</form>
+	</div>
+}

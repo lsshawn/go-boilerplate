@@ -11,7 +11,9 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
+	"github.com/lsshawn/go-todo/internal/dto"
 	"github.com/lsshawn/go-todo/views"
+	"github.com/lsshawn/go-todo/views/components"
 	openai "github.com/sashabaranov/go-openai"
 )
 
@@ -28,8 +30,36 @@ func main() {
 
 	app.GET("/", func(c echo.Context) error {
 		// aiChat()
-		aiAssistant()
-		component := views.Index()
+		msgs := []*dto.MessageDto{}
+		component := views.Index(msgs)
+		return component.Render(context.Background(), c.Response().Writer)
+	})
+
+	app.POST("/user-message", func(c echo.Context) error {
+		userInput := c.FormValue("text") // Retrieve the user's input from the form
+
+		msgDto := &dto.MessageDto{
+			Role: "user",
+			Text: userInput,
+		}
+
+		component := components.ChatMessage(msgDto)
+		return component.Render(context.Background(), c.Response().Writer)
+	})
+
+	app.POST("/ask", func(c echo.Context) error {
+		question := c.FormValue("text")
+		fmt.Printf("LS -> cmd/main.go:50 -> question: %+v\n", question)
+		msg, err := aiAssistant(question)
+		if err != nil {
+			return err
+		}
+		msgDto := &dto.MessageDto{
+			Role:  msg.Role,
+			Text:  msg.Content[0].Text.Value,
+			RunID: msg.RunID,
+		}
+		component := components.ChatMessage(msgDto)
 		return component.Render(context.Background(), c.Response().Writer)
 	})
 
@@ -57,6 +87,7 @@ func checkRun(client *openai.Client, threadID, runID string) (*openai.Run, error
 		case "requires_action":
 			// Handle required action here (not implemented in this example)
 			fmt.Println("Run requires action")
+			fmt.Printf("Run: %+v\n", run)
 			return &run, nil
 		default:
 			fmt.Println("Running...")
@@ -65,7 +96,7 @@ func checkRun(client *openai.Client, threadID, runID string) (*openai.Run, error
 	}
 }
 
-func aiAssistant() {
+func aiAssistant(question string) (*openai.Message, error) {
 	client := openai.NewClient(os.Getenv("OPENAI_API_KEY"))
 	ctx := context.Background()
 
@@ -77,7 +108,7 @@ func aiAssistant() {
 			Messages: []openai.ThreadMessage{
 				{
 					Role:    openai.ThreadMessageRoleUser,
-					Content: "write a code example for rust hello world",
+					Content: question,
 				},
 			},
 		},
@@ -86,7 +117,7 @@ func aiAssistant() {
 	resp, err := client.CreateThreadAndRun(ctx, req)
 	if err != nil {
 		fmt.Printf("CreateThreadAndRunRequest error: %v\n", err)
-		return
+		return nil, err
 	}
 	fmt.Printf("Thread ID: %s\n", resp.ThreadID)
 	fmt.Printf("Run ID: %s\n", resp.ID)
@@ -94,14 +125,24 @@ func aiAssistant() {
 	run, runErr := checkRun(client, resp.ThreadID, resp.ID)
 	if runErr != nil {
 		fmt.Printf("checkRun error: %v\n", runErr)
-		return
+		return nil, runErr
 	}
 	fmt.Printf("Run: %+v\n", run)
 
-	limit := 2
-	res, _ := client.ListMessage(ctx, resp.ThreadID, &limit, nil, nil, nil)
+	limit := 3
+	res, listErr := client.ListMessage(ctx, resp.ThreadID, &limit, nil, nil, nil)
 	for _, msg := range res.Messages {
-		fmt.Printf("Message: %s\n", msg.Content[0].Text.Value)
+		fmt.Printf("msg %+v\n", msg)
+		fmt.Printf("Message: %s: %s\n", msg.Role, msg.Content[0].Text.Value)
+	}
+	// Check if there are any messages
+	if len(res.Messages) > 0 {
+		lastMsg := res.Messages[0]
+		fmt.Printf("Last Message: %s: %s\n", lastMsg.Role, lastMsg.Content[0].Text.Value)
+		return &lastMsg, nil
+	} else {
+		fmt.Println("No messages found.")
+		return nil, listErr
 	}
 }
 

@@ -1,0 +1,19 @@
+package components
+
+import (
+	"github.com/lsshawn/go-todo/internal/dto"
+	"net/url"
+)
+
+templ ChatMessage(message *dto.MessageDto) {
+	<li
+ 		if message.Role == "user" {
+			hx-post={ "/ask?text=" + url.QueryEscape(message.Text) }
+			hx-trigger="load"
+			hx-target="#messages"
+			hx-swap="beforeend"
+		}
+	>
+		{ message.Role }: { message.Text }
+	</li>
+}

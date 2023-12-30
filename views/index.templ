@@ -1,12 +1,31 @@
 package views
 
-import "github.com/lsshawn/go-todo/views/layout"
+import (
+	"github.com/lsshawn/go-todo/views/layout"
+	"github.com/lsshawn/go-todo/internal/dto"
+	"github.com/lsshawn/go-todo/views/components"
+)
 
-templ Index() {
+templ Index(messages []*dto.MessageDto) {
 	@layout.Base() {
 		<!--<div id="chat-sse" hx-ext="sse" sse-connect="/chat-sse" sse-swap="message"></div>-->
-		<div class="h-screen w-screen bg-black flex flex-col justify-center items-center relative text-white">
-			Go!
+		<div
+ 			class="h-screen w-screen bg-black flex flex-col justify-center items-center text-white"
+ 			x-data="{
+                init() {
+                  console.log('init')
+            }
+      }"
+ 			x-init="init()"
+		>
+			<section class="flex flex-col justify-center items-center gap-2">
+				<ul id="messages">
+					for _, message := range messages {
+						@components.ChatMessage(message)
+					}
+				</ul>
+				@components.ChatInput()
+			</section>
 		</div>
 	}
 }
