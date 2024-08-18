@@ -1,7 +1,10 @@
 # First time installation
 
-1. `go mod tidy`
-2. `pnpm install`
+```
+go clean -modcache
+go mod tidy
+pnpm install
+```
 
 # To run...
 

@@ -1,11 +1,12 @@
 package views
 
-import "github.com/lsshawn/go-todo/views/layout"
+import "boilerplate/views/layout"
 
 templ Index() {
-	@layout.Base() {
-		<div class="h-screen w-screen bg-black flex flex-col justify-center items-center relative text-white">
-			Go!
-		</div>
-	}
+@layout.Base() {
+<div class="h-screen w-screen bg-black flex flex-col justify-center items-center relative text-white">
+  <button class="btn btn-primary">Go!</button>
+  <span class="loading loading-spinner loading-lg"></span>
+</div>
+}
 }

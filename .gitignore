@@ -2,7 +2,12 @@ app
 *.swp
 *.test
 *.out
-tmp
+tmp/
 .env
 node_modules/
 *_templ.go
+static/css/tailwind.css
+*.log
+/boilerplate
+.vscode/
+.idea/

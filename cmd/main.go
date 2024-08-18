@@ -3,8 +3,9 @@ package main
 import (
 	"context"
 
+	"boilerplate/views"
+
 	"github.com/labstack/echo/v4"
-	"github.com/lsshawn/go-todo/views"
 )
 
 func main() {

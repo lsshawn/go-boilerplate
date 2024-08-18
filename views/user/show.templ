@@ -1,25 +1,25 @@
 package user
 
 import (
-	"github.com/lsshawn/go-todo/views/layout"
-	"github.com/lsshawn/go-todo/views/components"
-	"github.com/lsshawn/go-todo/internal/model"
+"views/layout"
+"views/components"
+"internal/model"
 )
 
 func getAuthUser(c context.Context) string {
-	user, ok := c.Value("user").(string)
-	if !ok {
-		return ""
-	}
-	return user
+user, ok := c.Value("user").(string)
+if !ok {
+return ""
+}
+return user
 }
 
 templ Show(user model.User) {
-	<div>
-		{ getAuthUser(ctx) }
-	</div>
-	@layout.Base() {
-		<h1>Show User { user.Email }</h1>
-		@components.Input("email", "email")
-	}
+<div>
+  { getAuthUser(ctx) }
+</div>
+@layout.Base() {
+<h1>Show User { user.Email }</h1>
+@components.Input("email", "email")
+}
 }

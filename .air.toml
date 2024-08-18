@@ -3,8 +3,8 @@ tmp_dir = "tmp"
 
 [build]
   bin = "./tmp/main"
-  cmd = "templ generate && tailwindcss -i assets/css/tailwind.css -o static/css/tailwind.css --minify && go build -o ./tmp/main cmd/main.go"
-  # cmd = "templ generate && 	tailwindcss -i assets/css/tailwind.css -o assets/css/tailwind-output.css --minify && go build -o ./tmp/main cmd/main.go"
+  cmd = "npm run build:css && templ generate && go build -o ./tmp/main cmd/main.go"
+  # cmd = "templ generate && tailwindcss -i assets/css/tailwind.css -o static/css/tailwind.css --minify && go build -o ./tmp/main cmd/main.go"
   delay = 1000
   exclude_dir = ["assets", "tmp", "vendor"]
   exclude_file = []
