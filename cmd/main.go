@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 
+	"boilerplate/internal/handlers"
 	"boilerplate/views"
 
 	"github.com/labstack/echo/v4"
@@ -22,6 +23,11 @@ func main() {
 
 	app.Static("/css", "css")
 	app.Static("/static", "static")
+
+	app.GET("/account", handlers.AccountPage)
+	app.POST("/account/request-otp", handlers.RequestOTP)
+	app.POST("/account/validate-otp", handlers.ValidateOTP)
+	app.POST("/account/logout", handlers.Logout)
 
 	app.Logger.Fatal(app.Start(":1323"))
 }
