@@ -2,7 +2,10 @@ package handlers
 
 import (
 	"net/http"
+	"regexp"
 
+	"boilerplate/internal/models"
+	"boilerplate/internal/services"
 	"boilerplate/views/account"
 
 	"github.com/labstack/echo/v4"
@@ -17,7 +20,28 @@ func RequestOTP(c echo.Context) error {
 	if email == "" {
 		return c.String(http.StatusBadRequest, "Email is required")
 	}
-	// TODO: Implement OTP generation and sending
+	// Validate email
+	emailRegex := regexp.MustCompile(`^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$`)
+	if !emailRegex.MatchString(email) {
+		return c.String(http.StatusBadRequest, "Invalid email format")
+	}
+
+	// Generate and send OTP
+	otp := services.GenerateOTP()
+	err := services.SendOTP(c.Request().Context(), email, otp)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to send OTP")
+	}
+
+	// Store OTP in database
+	user, err := models.GetOrCreateUser(c.Request().Context(), email)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to create user")
+	}
+	err = models.CreateOTP(c.Request().Context(), user.ID, otp)
+	if err != nil {
+		return c.String(http.StatusInternalServerError, "Failed to create OTP")
+	}
 	return render(c, account.OTPForm(email))
 }
 
