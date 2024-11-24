@@ -6,7 +6,6 @@ import (
 
 	"boilerplate/internal/database"
 	"boilerplate/internal/handlers"
-	"boilerplate/views"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
