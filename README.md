@@ -6,6 +6,10 @@ go mod tidy
 pnpm install
 ```
 
-# To run...
+# To run
 
-`air`
+`go mod tidy && air`
+
+# To build
+
+`go build -o app ./cmd`
